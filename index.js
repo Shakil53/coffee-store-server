@@ -11,8 +11,6 @@ app.use(express.json());
 
 
 
-console.log(process.env.DB_USER)
-console.log(process.env.DB_PASS)
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.u7o1gfd.mongodb.net/?retryWrites=true&w=majority`;
@@ -34,6 +32,21 @@ async function run() {
         await client.connect();
 
 
+        const coffeeCollection = client.db('coffeeDB').collection('coffee')
+
+
+        app.get('/addCoffee', async (req, res) => {
+            const cursor = coffeeCollection.find();
+            const result = await cursor.toArray()
+            res.send(result);
+        })
+
+        app.post('/addCoffee', async (req, res) => {
+            const newCoffee = req.body;
+            console.log(newCoffee);
+            const result = await coffeeCollection.insertOne(newCoffee)
+            res.send(result)
+        })
 
 
         // Send a ping to confirm a successful connection
